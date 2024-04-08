@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 var salt = bcrypt.genSaltSync(10);
 
 exports.store = catchAsyncErrors(async (req, res, next) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
         return res.status(400).json({
@@ -22,7 +22,8 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
         const user = await User.create({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: role || "user"
         });
 
         res.status(200).json({
