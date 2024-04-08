@@ -3,6 +3,8 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const ErrorHandler = require('../utils/ErrorHandler')
+const sendEmail = require('../utils/sendEmail')
 
 var salt = bcrypt.genSaltSync(10);
 
@@ -68,3 +70,25 @@ exports.login = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+// Forget password
+exports.forgetPassword = catchAsyncErrors(async (req, res, next) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(new ErrorHandler(`User with this ${email} not found`));
+    }
+    const generatedOTP = crypto.randomBytes(3).toString("hex");
+  
+    try {
+      await sendEmail(email, "Password Reset OTP", `Your OTP is ${generatedOTP}`);
+      user.forgetPasswordOtp = generatedOTP;
+      await user.save();
+      res.status(200).json({
+        success: true,
+        message: "OTP sent successfully",
+        otp: generatedOTP,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message));
+    }
+});
