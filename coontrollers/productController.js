@@ -5,10 +5,10 @@ const fs = require("fs");
 const path = require("path");
 
 exports.store = catchAsyncErrors(async (req, res, next) => {
-    const { title, price, description } = req.body;
+    const { title, price, description ,category } = req.body;
     const { image } = req.files;
 
-    if (!title || !price || !description) {
+    if (!title || !price || !description || !category) {
         return next(new ErrorHandler("Fields missing", 400));
     }
 
@@ -26,21 +26,20 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
 
     const imageUrl = `${req.protocol}://${req.get("host")}/${fileName}`;
 
-    try {
+   
         const result = await Product.create({
             title,
             description,
             price,
-            image: imageUrl
+            image: imageUrl,
+            category
         });
         
         res.status(201).json({
             message: 'Operation successful',
             result
         });
-    } catch (error) {
-        return next(new ErrorHandler("Error storing product details", 500));
-    }
+    
 });
 
 //Get all products
