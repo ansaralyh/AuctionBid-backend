@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const produSchema = new mongoose.Schema({
-    title:{
+    category:{
         type: String,
         enum : ['vehicle',"jewelry",'real estate']
+    },
+    title:{
+        type:String
     },
     price:{
         type:Number

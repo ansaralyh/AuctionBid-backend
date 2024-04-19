@@ -10,4 +10,4 @@ router.delete('/:id',auth,isAuthorizedRole(['user','admin']),destroy)
 router.put('/:id',auth,isAuthorizedRole(['user','admin']),update)
 
 
-module.exports= router
+module.exports= router 
