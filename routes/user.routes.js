@@ -5,7 +5,6 @@ const router = express.Router();
 router.post("/",store);
 router.post("/login",login);
 router.post("/forgetPassword",forgetPassword);
-router.post("/users",store)
 
 
 
