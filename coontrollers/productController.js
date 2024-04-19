@@ -33,7 +33,7 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
             price,
             image: imageUrl
         });
-
+        
         res.status(201).json({
             message: 'Operation successful',
             result
