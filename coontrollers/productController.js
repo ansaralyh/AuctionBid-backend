@@ -42,3 +42,99 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Error storing product details", 500));
     }
 });
+
+//Get all products
+exports.index = catchAsyncErrors(async(req,res,next) =>{
+    const products = await Product.find();
+    if(!products){
+        return next(new ErrorHandler("Products not found"))
+    }
+    res.status(200).json({
+        success:true,
+        result:products
+    })
+})
+
+
+// get single product
+
+exports.get = catchAsyncErrors(async(req,res,next) =>{
+    const product = req.params.id;
+    const requiredProduct = await Product.findById(req.params.id);
+    if(!product){
+        return next(new ErrorHandler("Product not found"))
+    }
+    res.status(200).json({
+        success:true,
+        result:requiredProduct
+    })
+})
+
+// delete product
+exports.destroy = catchAsyncErrors(async (req, res, next) => {
+    const productId = req.params.id;
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+    
+    if (!deletedProduct) {
+        return next(new ErrorHandler("Product not found", 404));
+    }
+    
+    res.status(200).json({
+        success: true,
+        message: "Product deleted successfully"
+    });
+});
+
+
+// update the product
+exports.update = catchAsyncErrors(async (req, res, next) => {
+    const productId = req.params.id;
+    const { title, price, description } = req.body;
+
+    if (!title || !price || !description) {
+        return next(new ErrorHandler("Fields missing", 400));
+    }
+
+    let imageUrl;
+    if (req.files && req.files.image) {
+        const image = req.files.image;
+        const uploadFolderPath = path.join(__dirname, "../uploads");
+
+        const product = await Product.findById(productId);
+
+        if (product && product.image) {
+            const previousImagePath = path.join(uploadFolderPath, path.basename(product.image));
+            fs.unlinkSync(previousImagePath);
+        }
+
+        const fileName = image.name;
+        const imagePath = path.join(uploadFolderPath, fileName);
+        await image.mv(imagePath);
+        imageUrl = `${req.protocol}://${req.get("host")}/${fileName}`;
+    }
+
+    const updatedData = {
+        title,
+        price,
+        description
+    };
+
+    if (imageUrl) {
+        updatedData.image = imageUrl;
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(productId, updatedData, { new: true });
+
+    if (!updatedProduct) {
+        return next(new ErrorHandler("Product not found", 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Product updated successfully",
+        result: updatedProduct
+    });
+});
+
+
+
