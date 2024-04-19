@@ -26,7 +26,7 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
 
     const imageUrl = `${req.protocol}://${req.get("host")}/${fileName}`;
 
-    try {
+   
         const result = await Product.create({
             title,
             description,
@@ -38,9 +38,7 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
             message: 'Operation successful',
             result
         });
-    } catch (error) {
-        return next(new ErrorHandler("Error storing product details", 500));
-    }
+   
 });
 
 //Get all products
