@@ -66,7 +66,8 @@ exports.login = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "Logged in successfully",
-        token
+        token,
+        user,
     });
 });
 
@@ -92,3 +93,15 @@ exports.forgetPassword = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler(error.message));
     }
 });
+
+
+
+// get all users
+exports.getAllUsers = async (req, res) => {
+    try {
+      const users = await User.find();
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
