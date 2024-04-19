@@ -4,7 +4,7 @@ const { createContact, getAllContact } = require('../coontrollers/contactControl
 const router = express.Router();
 
 router.post('/', createContact);
-router.get('/contacts', getAllContact);
+router.get('/', getAllContact);
 
 
 module.exports = router
