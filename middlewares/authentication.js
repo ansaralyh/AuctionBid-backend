@@ -1,7 +1,7 @@
 const jsonwebtoken = require('jsonwebtoken');
-const catchAsyncErrors = require('../middleware/catchAsyncErrors')
+const catchAsyncErrors = require('../middlewares/catchAsyncErrors')
 const ErrorHandler = require('../utils/ErrorHandler');
-const users = require('../models/userSchema')
+const users = require('../models/userModel')
  
 // Auth middleware
 
@@ -16,7 +16,7 @@ exports.auth = async (req, res, next) => {
         }
 
         const token = authHeader.split(' ')[1];
-        console.log("token :",token)
+        // console.log("token :",token)
         
         if (!token) {
             return res.status(401).json({ error: 'User not authenticated', message: 'Token not provided.' });
@@ -44,7 +44,7 @@ exports.auth = async (req, res, next) => {
 exports.isAuthorizedRole = (roles) => {
     return (req, res, next) => {
         // console.log(roles)
-        console.log("req.user :",req.user.role)
+        // console.log("req.user :",req.user.role)
         if (roles.includes(req.user.role)) {
             return next();
         }
