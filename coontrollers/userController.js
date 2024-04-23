@@ -9,9 +9,9 @@ const sendEmail = require('../utils/sendEmail')
 var salt = bcrypt.genSaltSync(10);
 
 exports.store = catchAsyncErrors(async (req, res, next) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, cnic, address, role } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !cnic || !address || !password) {
         return res.status(400).json({
             success: false,
             message: "Fields missing"
@@ -24,6 +24,8 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
         const user = await User.create({
             name,
             email,
+            cnic,
+            address,
             password: hashedPassword,
             role: role || "user"
         });
@@ -101,6 +103,19 @@ exports.getAllUsers = async (req, res) => {
     try {
       const users = await User.find();
       res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+
+//   total number of users
+
+exports.getTotalUsers = async (req, res) => {
+    try {
+      const totalUsers = await User.countDocuments();
+      res.status(200).json({ total: totalUsers });
+      console.log(totalUsers)
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

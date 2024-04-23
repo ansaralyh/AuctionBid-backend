@@ -58,7 +58,6 @@ exports.index = catchAsyncErrors(async(req,res,next) =>{
 
 
 // get single product
-
 exports.get = catchAsyncErrors(async(req,res,next) =>{
     const product = req.params.id;
     const requiredProduct = await Product.findById(req.params.id);
@@ -137,5 +136,17 @@ exports.update = catchAsyncErrors(async (req, res, next) => {
     });
 });
 
+
+
+// total number of products
+
+exports.getTotalProducst = async (req, res) => {
+    try {
+      const totalProducts = await Product.countDocuments();
+      res.status(200).json({ total: totalProducts });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 
 
