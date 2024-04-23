@@ -16,8 +16,13 @@ const produSchema = new mongoose.Schema({
     image:{
         type:String
     },
+    
+    
+    
     date:{
         type:Date,
     }
 })
+
+
 module.exports = mongoose.model("products",produSchema)
