@@ -15,7 +15,7 @@ exports.biddingOnProduct = catchAsyncErrors(async (req, res, next) => {
 
         const productDetails = await Product.findById(product);
         if (!productDetails) {
-            throw new ErrorHandler('Product not found', 404);
+            return next (new ErrorHandler('Product not found',404))
         }
 
         if (parseFloat(bid_price) <= parseFloat(productDetails.price)) {
