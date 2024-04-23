@@ -19,6 +19,9 @@ const produSchema = new mongoose.Schema({
     
     
     
+    date:{
+        type:Date,
+    }
 })
 
 

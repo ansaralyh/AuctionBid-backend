@@ -5,10 +5,10 @@ const fs = require("fs");
 const path = require("path");
 
 exports.store = catchAsyncErrors(async (req, res, next) => {
-    const { title, price, description ,category } = req.body;
+    const { title, price, description ,category,date } = req.body;
     const { image } = req.files;
 
-    if (!title || !price || !description || !category) {
+    if (!title || !price || !description || !category || !date) {
         return next(new ErrorHandler("Fields missing", 400));
     }
 
@@ -32,13 +32,15 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
             description,
             price,
             image: imageUrl,
-            category
+            category,
+            date
         });
         
         res.status(201).json({
             message: 'Operation successful',
             result
         });
+   
     
 });
 
@@ -65,7 +67,6 @@ exports.index = catchAsyncErrors(async(req,res,next) =>{
 
 
 // get single product
-
 exports.get = catchAsyncErrors(async(req,res,next) =>{
     const product = req.params.id;
     const requiredProduct = await Product.findById(req.params.id);
@@ -145,5 +146,16 @@ exports.update = catchAsyncErrors(async (req, res, next) => {
 });
 
 
+
+// total number of products
+
+exports.getTotalProducst = async (req, res) => {
+    try {
+      const totalProducts = await Product.countDocuments();
+      res.status(200).json({ total: totalProducts });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 
 
