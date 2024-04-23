@@ -6,7 +6,7 @@ const Product = require('../models/productModel');
 
 
 exports.biddingOnProduct = catchAsyncErrors(async (req, res, next) => {
-    try {
+  
         const { bid_price, product, user_id } = req.body;
 
         if (!bid_price || !product || !user_id) {
@@ -25,7 +25,6 @@ exports.biddingOnProduct = catchAsyncErrors(async (req, res, next) => {
         const highestBid = await BidModel.findOne({ product }).sort({ bid_price: -1 });
 
         if (highestBid && parseFloat(bid_price) <= parseFloat(highestBid.bid_price)) {
-            
             return  next (new ErrorHandler('Bid price must be greater than all previous bids', 400));
         }
 
@@ -46,9 +45,7 @@ exports.biddingOnProduct = catchAsyncErrors(async (req, res, next) => {
             message: 'Bid placed successfully',
             bid: populatedBid
         });
-    } catch (error) {
-        next(error);
-    }
+   
 });
 
 
