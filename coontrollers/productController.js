@@ -45,25 +45,22 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
 });
 
 //Get all products
-exports.index = catchAsyncErrors(async(req,res,next) =>{
+exports.index = catchAsyncErrors(async (req, res, next) => {
     let query = {};
     if (req.query.category) {
         query.category = req.query.category;
-      }
-      if (req.query.status) {
-        query.status = req.query.status;
-      }
-    const products = await Product.find(query)
-    if(!products){
-        return next(new ErrorHandler("Products not found"))
     }
+
+    const products = await Product.find(query);
+    if (!products || products.length === 0) {
+        return next(new ErrorHandler("No products found with the specified category", 404));
+    }
+
     res.status(200).json({
-        success:true,
-        result:products,
-        
-    })
-    
-})
+        success: true,
+        result: products
+    });
+});
 
 
 // get single product
@@ -148,7 +145,6 @@ exports.update = catchAsyncErrors(async (req, res, next) => {
 
 
 // total number of products
-
 exports.getTotalProducst = async (req, res) => {
     try {
       const totalProducts = await Product.countDocuments();
