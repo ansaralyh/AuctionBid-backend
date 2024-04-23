@@ -11,7 +11,7 @@ const bidSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:'users'
     },
-    date:{
+    date:{  
         type:Date
     },
     owner:{

@@ -49,3 +49,30 @@ exports.biddingOnProduct = catchAsyncErrors(async (req, res, next) => {
         next(error);
     }
 });
+
+
+exports.getHighestBid = catchAsyncErrors(async (req, res, next) => {
+    try {
+        const highestBid = await BidModel.findOne().sort({ bid_price: -1 }).populate('product user_id owner');
+
+        if (!highestBid) {
+            throw new ErrorHandler('No highest bid found', 404);
+        }
+
+        res.status(200).json({
+            success: true,
+            highestBid
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+exports.totalBids = catchAsyncErrors(async (req,res,next)=>{
+    const totalBids = await BidModel.countDocuments();
+    console.log(totalBids)
+    res.status(200).json({
+        success:true,
+        totalBids
+    })
+})
