@@ -16,7 +16,7 @@ exports.auth = async (req, res, next) => {
         }
 
         const token = authHeader.split(' ')[1];
-        console.log("token :",token)
+        // console.log("token :",token)
         
         if (!token) {
             return res.status(401).json({ error: 'User not authenticated', message: 'Token not provided.' });
@@ -27,7 +27,7 @@ exports.auth = async (req, res, next) => {
         const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
         // console.log(decoded);
         const user = await users.findById(decoded.id);
-        console.log(user)
+        // console.log(user)
         if(!user){
             return next(new ErrorHandler('User not found'),404)
         }
