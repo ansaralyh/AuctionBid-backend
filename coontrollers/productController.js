@@ -44,14 +44,23 @@ exports.store = catchAsyncErrors(async (req, res, next) => {
 
 //Get all products
 exports.index = catchAsyncErrors(async(req,res,next) =>{
-    const products = await Product.find();
+    let query = {};
+    if (req.query.category) {
+        query.category = req.query.category;
+      }
+      if (req.query.status) {
+        query.status = req.query.status;
+      }
+    const products = await Product.find(query)
     if(!products){
         return next(new ErrorHandler("Products not found"))
     }
     res.status(200).json({
         success:true,
-        result:products
+        result:products,
+        
     })
+    
 })
 
 
