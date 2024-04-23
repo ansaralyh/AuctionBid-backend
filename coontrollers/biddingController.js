@@ -25,7 +25,7 @@ exports.biddingOnProduct = catchAsyncErrors(async (req, res, next) => {
         const highestBid = await BidModel.findOne({ product }).sort({ bid_price: -1 });
 
         if (highestBid && parseFloat(bid_price) <= parseFloat(highestBid.bid_price)) {
-            return new ErrorHandler('Bid price must be greater than all previous bids', 400);
+            return  next (new ErrorHandler('Bid price must be greater than all previous bids', 400));
         }
 
         const newBid = new BidModel({
