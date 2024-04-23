@@ -23,3 +23,15 @@ exports.getAllContact = async (req, res) => {
         res.status(500).json(error)
     }
 }
+
+
+// get all tolat number of Contacts
+
+exports.getTotalContacts = async (req, res) => {
+    try {
+      const getTotalContacts = await Contact.countDocuments();
+      res.status(200).json({ total: getTotalContacts });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
