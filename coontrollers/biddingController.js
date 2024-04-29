@@ -14,39 +14,41 @@ exports.biddingOnProduct = catchAsyncErrors(async (req, res, next) => {
         }
 
         const productDetails = await Product.findById(product);
+        const highestBid = await BidModel.findOne({ product }).sort({ bid_price: -1 });
         if (!productDetails) {
             return next(new ErrorHandler('Product not found', 404));
+        }else if(parseFloat(bid_price) <= parseFloat(productDetails.price)){
+            res.status(400).json({
+                message:'Bid price must be greater than the product price'
+            })
+        }else if(highestBid && parseFloat(bid_price) <= parseFloat(highestBid.bid_price)){
+            res.status(400).json({
+                message:'Bid price must be greater than all previous bids'
+            })
+        }else{
+            const newBid = new BidModel({
+                bid_price,
+                product,
+                user_id,
+                date: new Date(),
+                owner: req.user._id 
+            });
+    
+            await newBid.save();
+    
+            const populatedBid = await BidModel.findById(newBid._id).populate('product user_id owner');
+    
+            res.status(201).json({
+                success: true,
+                message: 'Bid placed successfully',
+                bid: populatedBid
+            });
         }
 
-        if (parseFloat(bid_price) <= parseFloat(productDetails.price)) {
-            return next(new ErrorHandler('Bid price must be greater than the product price', 400));
-        }
 
-        const highestBid = await BidModel.findOne({ product }).sort({ bid_price: -1 });
-
-        if (highestBid && parseFloat(bid_price) <= parseFloat(highestBid.bid_price)) {
-            return  next (new ErrorHandler('Bid price must be greater than all previous bids', 400));
-        }
-
-        const newBid = new BidModel({
-            bid_price,
-            product,
-            user_id,
-            date: new Date(),
-            owner: req.user._id 
-        });
-
-        await newBid.save();
-
-        const populatedBid = await BidModel.findById(newBid._id).populate('product user_id owner');
-
-        res.status(201).json({
-            success: true,
-            message: 'Bid placed successfully',
-            bid: populatedBid
-        });
+        
     } catch (error) {
-        next(error);
+        res.status(500).json(error)
     }
 });
 
@@ -74,5 +76,13 @@ exports.totalBids = catchAsyncErrors(async (req,res,next)=>{
     res.status(200).json({
         success:true,
         totalBids
+    })
+})
+
+exports.getProductBids = catchAsyncErrors(async (req,res,next)=>{
+    const bids = await BidModel.find({product:req.params.id}).populate('user_id')
+    res.status(200).json({
+        success:true,
+        bids
     })
 })
